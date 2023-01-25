@@ -22,8 +22,7 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Bez, I Post Different Hacking Tri
 * * *
 ### **Proving Grounds Writeups:~#**
 * * *
-
--
+-[[Jan 25 2023]][Empire-breakout](https://th3cyb3rw0lf07.github.io/posts/pg/empire-breakout.html)`Webmin, Enumeration, Capabilities`
 
 * * *
 ### **PwnTillDawn Writeups:~#**
