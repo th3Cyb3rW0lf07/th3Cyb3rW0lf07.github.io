@@ -20,16 +20,10 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Bez, I Post Different Hacking Tri
 - **Github:** `https://github.com/th3Cyb3rW0lf07`
 
 * * *
-### **CyberSecLabs Writeups:~#**
+### **Proving Grounds Writeups:~#**
 * * *
 
 -
-
-* * *
-
--
-
-* * *
 
 * * *
 ### **PwnTillDawn Writeups:~#**
