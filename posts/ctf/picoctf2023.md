@@ -1,10 +1,10 @@
 <h3> PICOCTF 2023 </h3>
 
-#### Description: I really enjoyed participating in this CTF. Big shoutout to my teammates in the JuJu team. I attempted and solved different categories like the general, forensics, some cryptography and RE.
+#### Description: I really enjoyed participating in this CTF. Big shoutout to my teammates in the JuJu team. I attempted and solved different categories like the general, forensics, some cryptography and RE. This writeup will show the challenges I was able to solve to contribute points to the team.
 
 ##### Let's start with the Forensics
 
-### Forensics 5/7
+### Forensics (5/7)
 
 
 
@@ -272,4 +272,31 @@ Flag: ```picoCTF{SAf3_0p3n3rr_y0u_solv3d_it_5bfbd6f1}```
 ### Crypto (2/7)
 
 #### HideToSee (100 pts)
-![Screenshot from 2023-03-28 22-59-44](https://user-images.githubusercontent.com/66115581/228377138-4d24bae1-36f7-4cf4-a43d-b046252806d6.png)
+![image](https://user-images.githubusercontent.com/66115581/228377138-4d24bae1-36f7-4cf4-a43d-b046252806d6.png)
+
+The file required for download here is a jpeg file, atbash.jpg.
+
+On downloading the file, I quickly ran exiftool on it to see if there was anything to be scraped from the metadata but found nothing much. Next I decided to run steghide to see if I can extract any hidden data in the file using the command - ```steghide extract -sf atbash.jpg```
+
+After running the cmd and without inputting any password, this is what we get
+```
+$ steghide extract -sf atbash.jpg 
+Enter passphrase: 
+wrote extracted data to "encrypted.txt".
+```
+We've gotten an encrypted.txt file from the jpg. Opening the encrypted file, there is our encoded flag. Quickly, I copy it and put it into CyberChef.
+
+Trying to figure out which encoding cipher it uses, the file name atbash.jpg actually rings a bell. Adding the atbash cipher to the recipe, we get our flag.
+![image](https://user-images.githubusercontent.com/66115581/228458956-de9cc0d8-4701-4e5c-bfc5-5eb7b5dc1e4a.png)
+
+Flag: ```picoCTF{atbash_crack_92533667}```
+
+
+
+#### ReadMyCert (100 pts)
+![image](https://user-images.githubusercontent.com/66115581/228460223-941a28ae-1450-40e9-9155-bf5f0fd4588a.png)
+
+For the challenge, the solve is pretty easy. We're required to download a csr certificate file. After downloading, I opened the file and the flag was just starting at me.
+![image](https://user-images.githubusercontent.com/66115581/228460677-9691aaed-5806-4b9b-9cc3-9032b41897a0.png)
+
+Flag: ```picoCTF{read_mycert_5aeb0d4f}```
