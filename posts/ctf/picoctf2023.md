@@ -8,7 +8,7 @@
 
 
 
-#### hideme (100 pts)
+#### 1) hideme (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228306813-f5c0de29-ad18-4528-96e1-69173b050339.png)
 
 Here we see there is an image to be downloaded. Upon downloading, the image is a png file. 
@@ -28,7 +28,7 @@ Flag: ```picoCTF{Hiddinng_An_imag3_within_@n_ima9e_d55982e8}```
 
 
 
-#### PcapPoisoning (100 pts)
+#### 2) PcapPoisoning (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228312302-c35133a7-fecb-48e0-810e-56d8eb8b2a67.png)
 
 The file required to be downloaded is a pcap file. Let's open it in wireshark and analyze it. 
@@ -44,7 +44,7 @@ Flag: ```picoCTF{P64P_4N4L7S1S_SU55355FUL_4624a8b6}```
 
 
 
-#### who is it (100 pts)
+#### 3) who is it (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228320994-70aa2d9d-fc1d-4d8a-85a4-5d789160be23.png)
 
 The download file required for this challenge is an eml or email file. Rather than opening it on the email client, open it in the text editor.
@@ -205,7 +205,7 @@ Flag: ```picoCTF{WilhelmZwalina}```
 
 
 
-#### MSB (200 pts)
+#### 3) MSB (200 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228331499-5c364526-b4e6-480b-b678-5a16a233b999.png)
 
 In this challenge, the file required to be downloaded was a png file.
@@ -225,7 +225,7 @@ Flag: ```picoCTF{15_y0ur_que57_qu1x071c_0r_h3r01c_3a219174}```
 
 
 
-#### FindAndOpen (200 pts)
+#### 4) FindAndOpen (200 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228338065-3ce38c8e-9878-48b2-8302-5f6930e8e970.png)
 
 The required files for download here area flag.zip file and dump.pcap file. Trying to unzip the compressed file and it's password protected. 
@@ -243,7 +243,7 @@ Flag: ```picoCTF{R34DING_LOKd_fil56_succ3ss_494c4f32}```
 
 ### Reverse Engineering (3/9)
 
-#### Ready Gladiator 0 (100 pts)
+#### 1) Ready Gladiator 0 (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228354064-dbde5f5e-6a69-4e67-a16a-1c67ae6a65e4.png)
 
 This challenge is based on the Corewars game and the opponent is the Imp. Let's start the instance.
@@ -257,7 +257,7 @@ Flag: ```picoCTF{h3r0_t0_z3r0_4m1r1gh7_f1e207c4}```
 
 
 
-#### Safe Opener 2 (100 pts)
+#### 2) Safe Opener 2 (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228357426-a1c93422-4401-4006-8c65-7b94c791a2e3.png)
 
 This challenge needs us to download a java class file. We load it into ghidra and look at the source code.
@@ -271,7 +271,7 @@ Flag: ```picoCTF{SAf3_0p3n3rr_y0u_solv3d_it_5bfbd6f1}```
 
 ### Crypto (2/7)
 
-#### HideToSee (100 pts)
+#### 1) HideToSee (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228377138-4d24bae1-36f7-4cf4-a43d-b046252806d6.png)
 
 The file required for download here is a jpeg file, atbash.jpg.
@@ -293,7 +293,7 @@ Flag: ```picoCTF{atbash_crack_92533667}```
 
 
 
-#### ReadMyCert (100 pts)
+#### 2) ReadMyCert (100 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228460223-941a28ae-1450-40e9-9155-bf5f0fd4588a.png)
 
 For the challenge, the solve is pretty easy. We're required to download a csr certificate file. After downloading, I opened the file and the flag was just starting at me.
