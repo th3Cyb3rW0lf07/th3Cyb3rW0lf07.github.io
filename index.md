@@ -27,6 +27,6 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Bez, I Post Different Hacking Tri
 * * *
 ### **CTF Writeups:~#**
 * * *
--
+- [[Apr 1 2023]][PicoCTF writeups](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/posts/ctf/picoctf2023.md)
 
 <script src="https://tryhackme.com/badge/894204"></script>
