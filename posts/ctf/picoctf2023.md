@@ -205,7 +205,7 @@ Flag: ```picoCTF{WilhelmZwalina}```
 
 
 
-#### 3) MSB (200 pts)
+#### 4) MSB (200 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228331499-5c364526-b4e6-480b-b678-5a16a233b999.png)
 
 In this challenge, the file required to be downloaded was a png file.
@@ -225,7 +225,7 @@ Flag: ```picoCTF{15_y0ur_que57_qu1x071c_0r_h3r01c_3a219174}```
 
 
 
-#### 4) FindAndOpen (200 pts)
+#### 5) FindAndOpen (200 pts)
 ![image](https://user-images.githubusercontent.com/66115581/228338065-3ce38c8e-9878-48b2-8302-5f6930e8e970.png)
 
 The required files for download here area flag.zip file and dump.pcap file. Trying to unzip the compressed file and it's password protected. 
@@ -239,7 +239,7 @@ Still looking through the pcap to find any hints concerning the password for the
 
 Flag: ```picoCTF{R34DING_LOKd_fil56_succ3ss_494c4f32}```
 
-
+Sixth challenge will be updated soon.
 
 ### Reverse Engineering (3/9)
 
