@@ -1,6 +1,8 @@
 <h3> PICOCTF 2023 </h3>
 
 #### Description: I really enjoyed participating in this CTF. Big shoutout to my teammates in the JuJu team. I attempted and solved different categories like the general, forensics, some cryptography and RE. This writeup will show the challenges I was able to solve to contribute points to the team.
+![image](https://user-images.githubusercontent.com/66115581/229315275-a808d8be-10d9-40cc-be8e-2d6d5e8ed6ee.png)
+
 
 ##### Let's start with the Forensics
 
