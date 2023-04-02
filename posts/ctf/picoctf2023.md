@@ -302,3 +302,7 @@ For the challenge, the solve is pretty easy. We're required to download a csr ce
 ![image](https://user-images.githubusercontent.com/66115581/228460677-9691aaed-5806-4b9b-9cc3-9032b41897a0.png)
 
 Flag: ```picoCTF{read_mycert_5aeb0d4f}```
+
+
+Hope you enjoyed it and learned something new!
+Stay safe H4x0r
