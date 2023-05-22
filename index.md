@@ -7,14 +7,14 @@ title: Home
 ### Welcome To My Cyber Security Blog, H4X0R
 * * *
 
-Yo 👋, Welcome To My Cyber Security Blog I'm th3CyberW0lf, I Post Different Hacking Tricks, Writeups, Articles, Any Stuffs Related To Hacking That I Learn xD......
+Yo 👋, Welcome To My Cyber Security Blog I'm th3CyberW0lf, I Post Different Hacking Tricks, Writeups, Articles, Any Stuff Related To Hacking That I Learn xD......
 
 * * *
 ### Whoami:~#
 * * *
 
 - **My Name:**    `theCyberWolf`
-- **What Do I Do:**  `CTF / Ethical Hacking / Programming`
+- **What Do I Do:**  `CTF / Ethical Hacking / Digital Forensics & Incident Response / SOC / Programming`
 - **Twitter:** `https://twitter.com/th3Cyb3rW0lf`
 - **Github:** `https://github.com/th3Cyb3rW0lf07`
 
