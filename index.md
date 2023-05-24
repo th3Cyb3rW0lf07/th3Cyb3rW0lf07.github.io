@@ -28,4 +28,9 @@ Yo 👋, Welcome To My Cyber Security Blog I'm th3CyberW0lf, I Post Different Ha
 * * *
 - [[Apr 1 2023]][PicoCTF writeups](https://th3cyb3rw0lf07.github.io/posts/ctf/picoctf2023.html)
 
+* * *
+### **Walkthroughs & Articles:~#**
+* * *
+- [[May 24 2023]][Malware Analysis Lab Setup](https://th3cyb3rw0lf07.github.io/posts/walkthroughs_articles/malware-analysis-lab.html)
+
 <script src="https://tryhackme.com/badge/894204"></script>
