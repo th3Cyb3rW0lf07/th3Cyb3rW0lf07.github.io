@@ -32,5 +32,6 @@ Yo 👋, Welcome To My Cyber Security Blog I'm th3CyberW0lf, I Post Different Ha
 ### **Walkthroughs & Articles:~#**
 * * *
 - [[May 24 2023]][Malware Analysis Lab Setup](https://th3cyb3rw0lf07.github.io/posts/walkthroughs_articles/malware-analysis-lab.html)
+- [[Oct 16 2023]][Volatility](https://th3cyb3rw0lf07.github.io/posts/walkthroughs_articles/volatility.html)
 
 <script src="https://tryhackme.com/badge/894204"></script>
