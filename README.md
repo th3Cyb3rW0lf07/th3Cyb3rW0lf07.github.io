@@ -5,7 +5,7 @@
 
 - 👀 I’m interested in Cyber Security
 
-- 🌱 I’m currently learning Ethical Hacking
+- 🌱 I’m currently learning Security Monitoring and DFIR
 
 - 💞️ I’m looking to collaborate on Projects
 
