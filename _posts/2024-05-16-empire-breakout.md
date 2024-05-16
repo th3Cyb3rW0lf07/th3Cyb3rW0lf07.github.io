@@ -1,6 +1,13 @@
+---
+layout: post
+title: Empire Breakout walkthrough
+subtitle: Explanation
+categories: Hacking
+tags: [pg, hacking]
+---
 ### Empire-Breakout
 
-### Difficulty-Easy
+### Difficulty - Easy
 
 Start first with a port scan
 ```
