@@ -1,6 +1,9 @@
 ---
-layout: default
+layout: post
 title: Volatility - Memory forensics made simple
+subtitle: Volatility
+categories: Walkthrough
+tags: [forensics, walkthrough]
 ---
 
 ### Oi!! Another writeup, another challenge. Need to do more of these 😮‍💨.
