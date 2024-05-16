@@ -12,7 +12,7 @@ Whether I'm working on a new project, playing Football Manager, or celebrating s
 Join me on my journey as I continue to explore the fascinating world of cybersecurity and IT in general.
 
 ### Contact Me
-**Twitter:** `https://twitter.com/th3Cyb3rW0lf`
+**Twitter:** `@th3Cyb3rW0lf`
 
 **E-mail:** `th3cyb3rw0lf@proton.me`
 
