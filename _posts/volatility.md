@@ -1,6 +1,9 @@
 ---
-layout: default
+layout: post
 title: Volatility - Memory forensics made simple
+subtitle: Volatility challenge
+categories: Forensics
+tags: [security, forensics, hacking]
 ---
 
 ### Oi!! Another writeup, another challenge. Need to do more of these 😮‍💨.
@@ -57,5 +60,3 @@ There's our password and the answer to the final question!
 
 ### And there you have it h4x0r, that's a little guide on volatility and what it can do. If you want to practice using the tool, you can head over to this [room](https://tryhackme.com/room/memoryforensics) on TryHackMe and do your ting.
 ### Till next time, happy hacking :)
-
-<script src="https://tryhackme.com/badge/894204"></script>
