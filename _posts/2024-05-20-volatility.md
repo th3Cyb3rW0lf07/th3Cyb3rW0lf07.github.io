@@ -23,40 +23,41 @@ For this analysis, I'll be using REMnux, the virtual isolated environment for an
 
 We'll start by getting little information on the victim endpoint
 `vol.py -f dump.mem windows.info`
-![Screenshot from 2023-10-16 12-39-56](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/fae5ff6d-a39a-4c77-b5ae-a99bfd65676d)
+![volatility_1](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/7d03d9dc-fe6f-4bcc-860f-b8c88dd75f6e)
+
 
 And we have the answer to our first question on the challenge!
-![Screenshot from 2023-10-16 12-46-10](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/e59856ec-970e-432f-9024-c7861e95839d)
+![volatility_2](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/79b3a3d3-efae-40f5-b889-3194cd28f969)
 
 Next, we look at the processes
 `vol.py -f dump.mem windows.psscan` then `vol.py -f dump.mem windows.pstree`
-![Screenshot from 2023-10-16 12-56-58](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/7458aba2-5959-4de2-afdf-786b548f9266)
+![volatility_3](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/0f5891d6-c2d2-443e-9ec6-f7c513ab51d8)
 
 When looking at the results of the process tree, notice there are 2 processes named lsass.exe.This should not be, which means one of the processes is malicious. Pay attention to the PID and Parent PID. The malicious process has a PID 7592 and a Parent PID 3996 which points to explorer.exe. Definitely malicious!!
 We now have the answer to our second question!!
-![Screenshot from 2023-10-16 12-58-35](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/3f6aa5d7-f4d1-45f7-b1c9-b0de1bc34b72)
+![volatility_4](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/aaf50fe9-b2ce-4440-a08f-0aac781ccc23)
 
 Let's analyze the malicious process more. `vol.py -f dump.mem windows.pslist --pid 7592 --dump` This way we can anlyse the binary that's involved with this process. Checking the hashsum and running it through virustotal, we get this
-![Screenshot from 2023-10-16 13-09-13](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/7029e5fb-6b21-45b3-80df-289438b1e7b6)
+![vol_5](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/70c86794-3d97-437e-9255-f5c3bcf2d840)
 
 We see that the binary is malicious and the actual name is winpeas.exe, a tool used for privilege escalation on Windows hosts.
 And there we go, 3rd question answered!!!
-![Screenshot from 2023-10-16 13-10-22](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/40d20d86-f2c0-42af-8c61-026117039d4d)
+![vol_6](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/f0ae0409-bf34-4598-bfa1-41e58a3892df)
 
 To answer the next question, we need to investigate the sessions that were opened on the host. Since we already know that the PID for our malicious process is 7592, we can run `vol.py -f dump.mem windows.sessions | grep 7592`
-![Screenshot from 2023-10-16 13-15-38](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/9ff99705-0c57-40dd-a9b3-5223f250b01d)
+![vol_7](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/a82a01c4-b6c5-4e8c-be5e-dca90c7a16fb)
 
 There we go! We have the compromised account and the answer to question 4!!!!
-![Screenshot from 2023-10-16 13-16-26](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/24109abd-1670-417b-aede-38fd212cada4)
+![vol_8](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/4be13b13-4173-4a4e-b79c-be99af71495b)
 
 Now, let's answer our final question! We need to get the password of the compromised user account. `vol.py -f dump.mem windows.hashdump`
-![Screenshot from 2023-10-16 13-33-53](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/49454576-299c-4a10-9e31-a038398d2aa5)
+![vol_9](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/0717e693-9e67-4f2a-84f5-2782dcafd408)
 
 Take the nthash and run it through [Crackstation](crackstation.net/)
-![Screenshot from 2023-10-16 13-21-58](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/9afa78a7-a8b5-4b70-a01f-58cee09cb48f)
+![vol_10](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/c3f9acda-d1db-4de8-bb8a-2c766bf0fcf4)
 
 There's our password and the answer to the final question!
-![Screenshot from 2023-10-16 13-20-47](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/e91ed2c8-5efc-4779-9c82-318544233fc1)
+![vol_11](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/assets/66115581/fde1a17e-96aa-478c-a8c2-1dafc19ac910)
 
 ### And there you have it h4x0r, that's a little guide on volatility and what it can do. If you want to practice using the tool, you can head over to this [room](https://tryhackme.com/room/memoryforensics) on TryHackMe and do your ting.
 ### Till next time, happy hacking :)
