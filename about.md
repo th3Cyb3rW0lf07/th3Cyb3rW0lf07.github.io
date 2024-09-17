@@ -22,5 +22,5 @@ Join me on my journey as I continue to explore the fascinating world of cybersec
 
 **E-mail:** `th3cyb3rw0lf@proton.me`
 
-**Youtube:** [th3Cyb3rW0lf](https://youtube.com/@th3cyb3rw0lf)
+**Youtube:** [th3Cyb3rW0lf](https://www.youtube.com/channel/UCwbVGcxgjQKqRBhh_sm31Gg?sub_confirmation=1)
 
