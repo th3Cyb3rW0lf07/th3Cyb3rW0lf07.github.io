@@ -24,3 +24,5 @@ Join me on my journey as I continue to explore the fascinating world of cybersec
 
 **Youtube:** [th3Cyb3rW0lf](https://www.youtube.com/channel/UCwbVGcxgjQKqRBhh_sm31Gg?sub_confirmation=1)
 
+**Resume:** [Bezalel Nwosu](https://docs.google.com/document/d/1Ese5C2UA7h9uere_30b931G8RCDYbBvaCTA4sX-Tv5E/edit?usp=drivesdk)
+
