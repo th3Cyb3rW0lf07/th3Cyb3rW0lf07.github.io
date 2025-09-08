@@ -178,8 +178,47 @@ gcloud compute instances create windows-victim \
   --provisioning-model=SPOT \
   --boot-disk-size=50GB
 ```
-After the four VMs are created you should have all instances available in the Compute Engine page
+After the four VMs are created you should have all instances available in the Compute Engine page.
 
 <img width="700" height="162" alt="Screenshot From 2025-09-08 12-10-24" src="https://github.com/user-attachments/assets/e63be246-f2b9-4359-91b9-f7416e7d5244" />
+
+Next, let's setup the attack framework on the Attacker VM. The choice was between Caldera and Atomic red team, but we'll use Caldera. You can reference the [Caldera Documentation](https://caldera.readthedocs.io/en/latest/index.html).
+
+Prerequisites
+```yaml
+Python 3.8 or later (with pip3)
+NodeJS v16 or later (for Caldera v5)
+```
+```bash
+sudo apt update
+sudo apt install python3-pip nodejs npm git
+git clone https://github.com/mitre/caldera.git --recursive
+cd caldera
+pip3 install -r requirements.txt
+python3 server.py --insecure --build
+```
+In case you experience an error with the build, regarding magma or vue, this command helped me.
+```bash
+cd ~/caldera/plugins/magma
+npm install vue@3.2.47 @vue/compiler-sfc@3.2.47
+npm run build
+cd ~/caldera
+python3 server.py --insecure
+```
+
+Since we cannot no rdp into our Attacker VM, we need to create another firewall rule to allow traffic over port 8888. This port is used by Caldera UI. Enabling this rule would allow us to access the UI on our browser.
+```bash
+gcloud compute firewall-rules create allow-caldera-ui \
+  --network=soc-vpc \
+  --allow=tcp:8888 \
+  --source-ranges=0.0.0.0/0 \
+  --target-tags=attacker-access
+```
+```bash
+gcloud compute instances add-tags attacker-vm \
+  --zone=us-central1-a \
+  --tags=attacker-access
+```
+Now we have our Attacker VM set. Next up, we'll install and setup our SIEM.
 
 That's the progress so far...Updates coming soon, stay tuned!!
