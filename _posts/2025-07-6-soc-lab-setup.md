@@ -182,6 +182,8 @@ After the four VMs are created you should have all instances available in the Co
 
 <img width="700" height="162" alt="Screenshot From 2025-09-08 12-10-24" src="https://github.com/user-attachments/assets/e63be246-f2b9-4359-91b9-f7416e7d5244" />
 
+### Attack setup
+
 Next, let's setup the attack framework on the Attacker VM. The choice was between Caldera and Atomic red team, but we'll use Caldera. You can reference the [Caldera Documentation](https://caldera.readthedocs.io/en/latest/index.html).
 
 Prerequisites
