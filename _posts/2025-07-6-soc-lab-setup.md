@@ -137,8 +137,8 @@ gcloud compute instances create attacker-vm \
   --machine-type=e2-medium \
   --subnet=soc-subnet \
   --tags=ssh-access \
-  --image-project=kalilinux-images \
-  --image-family=kali-linux \
+  --image-project=debian-cloud \
+  --image-family=debian-11 \
   --provisioning-model=SPOT \
   --boot-disk-size=50GB
 ```
