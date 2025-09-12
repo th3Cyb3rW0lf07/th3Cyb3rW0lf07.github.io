@@ -223,4 +223,102 @@ gcloud compute instances add-tags attacker-vm \
 ```
 Now we have our Attacker VM set. Next up, we'll install and setup our SIEM.
 
+P.S Getting Caldera to work fully was a "little" frustrating and the fix was only a distro change away 😮‍💨
+
+### SIEM Setup
+
+Next we boot up the splunk-vm running Ubuntu 22.04. Since we're using Splunk for this setup, you'll have to sign up on the website to download any of he packages that'll be used.
+
+First download needed is Splunk Enterprise. At the time of this setup, the latest stable version of splunk enterprise. You can reach the download page [here](https://www.splunk.com/en_us/download/splunk-enterprise.html). Copy the command to download the .deb package for Linux. It should look like this...
+```bash
+wget -O splunk-10.0.0-xxxx-linux-amd64.deb "https://download.splunk.com/products/splunk/releases/10.0.0/linux/splunk-10.0.0-xxx-linux-amd64.deb"
+```
+
+Then install the package
+```bash
+sudo dpkg -i <package-name>
+```
+
+Once that's done, you can start splunk.
+```bash
+sudo /opt/splunk/bin/splunk start --accept-license
+```
+At this point, you'll be asked to set your username and password. This set of credentials would give you access to your Splunk web UI.
+
+You can also enable splunk to start at boot with this cmd:
+```bash
+sudo /opt/splunk/bin/splunk enable boot-start
+```
+Since we already have the splunk UI access configured in the firewall, we can access it from anywhere (for now) at 
+```yaml
+http://splunk-vm-ip:8000
+```
+<img width="800" height="791" alt="Screenshot From 2025-09-12 14-42-57" src="https://github.com/user-attachments/assets/feff9e53-4691-4aab-bb8d-177848cb95c9" />
+
+We also need to add another firewall rule to allow use to receive data from our victim VMs.
+```bash
+gcloud compute firewall-rules create allow-splunk-ingest \
+  --network=soc-vpc \
+  --allow=tcp:9997 \
+  --source-ranges=ubuntu-victim-ip,windows-victim-ip \
+  --target-tags=splunk-indexer
+
+gcloud compute instances add-tags splunk-vm \
+  --zone=us-central1-a \
+  --tags=splunk-indexer
+```
+Now, in the Splunk UI, we need to configure receiving data for the SIEM.
+Go to Settings>Forwarding and Receiving>Configure receiving and set the port to 9997
+<img width="403" height="229" alt="Screenshot From 2025-09-12 19-43-06" src="https://github.com/user-attachments/assets/9d7aae4c-0294-4094-8f5e-eaff2cbab899" />
+<img width="926" height="221" alt="Screenshot From 2025-09-12 19-43-35" src="https://github.com/user-attachments/assets/3f367286-4df6-4d6c-973d-a00e8dec1171" />
+
+### Victim Setup
+
+Now we'll use Splunk Forwarder to send logs to the SIEM. You can get the download from [here](https://www.splunk.com/en_us/download/universal-forwarder.html)
+
+#### Ubuntu
+Your download command should look like this for the 64-bit Linux .deb package
+```bash
+wget -O splunkforwarder-10.0.0-xxx-linux-amd64.deb "https://download.splunk.com/products/universalforwarder/releases/10.0.0/linux/splunkforwarder-10.0.0-xxx-linux-amd64.deb"
+
+sudo dpkg -i <package-name>
+```
+Start the forwarder
+```bash
+sudo /opt/splunkforwarder/bin/splunk start --accept-license
+```
+Add the indexer
+```bash
+sudo /opt/splunkforwarder/bin/splunk add forward-server <splunk-vm-ip>:9997
+```
+Add log sources
+```bash
+sudo /opt/splunkforwarder/bin/splunk add monitor /var/log/syslog
+sudo /opt/splunkforwarder/bin/splunk add monitor /var/log/auth.log
+```
+
+#### Windows
+Grab the download link for windows [here](https://www.splunk.com/en_us/download/universal-forwarder.html)
+
+Install It:
+- During setup, specify the Splunk VM’s IP and port 9997.
+- Choose which logs to forward: System, Security, and Application.
+
+Verify the service is running
+```bash
+Get-Service splunkforwarder
+```
+<img width="445" height="102" alt="Screenshot From 2025-09-12 15-43-01" src="https://github.com/user-attachments/assets/ace36eb6-aa6b-4cfd-9fd1-69eef8a1223d" />
+
+If all was done right, when we return to the Search and Reporting app on Splunk and run this query...
+```yaml
+index=* | stats count by host, sourcetype
+```
+We should get the hostnames of the victim VMs and their sources
+<img width="900" height="794" alt="Screenshot From 2025-09-12 15-42-27" src="https://github.com/user-attachments/assets/e43aa438-3027-4174-b794-f8aad1a06cd4" />
+
+Tada!!! We have data coming into the SIEM.
+
+Next, we finish the attack VM setup and launch some attacks!!
+
 That's the progress so far...Updates coming soon, stay tuned!!
