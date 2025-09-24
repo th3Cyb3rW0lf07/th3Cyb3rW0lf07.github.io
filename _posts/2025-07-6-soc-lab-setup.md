@@ -319,6 +319,71 @@ We should get the hostnames of the victim VMs and their sources
 
 Tada!!! We have data coming into the SIEM.
 
-Next, we finish the attack VM setup and launch some attacks!!
+Next, we finish the attack VM setup and launch some attacks!! But before that, we have another addition to make... we're adding TheHive and Cortex to the mix. This integration would help us organize the alerts and cases that we work on in the course of any simulation that is run.
+
+First we login to the splunk-vm to install TheHive and Cortex. We'll use the step-by-step guide to install cortex, following the steps outlined by Strangebee [here](https://docs.strangebee.com/cortex/installation-and-configuration/step-by-step-guide/). After the install completes, setup a secret key for cortex using this command
+```bash
+cat > /etc/cortex/secret.conf << _EOF_
+play.http.secret.key="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)"
+_EOF_
+```
+Then include the file in /etc/cortex/application.conf
+```yaml
+[..]
+include "/etc/cortex/secret.conf"
+[..]
+```
+Now that we have Cortex installed, we need to get TheHive. We can do this using the installation script provided by Strangebee. I ran this command and followed the options to install TheHive
+```bash
+wget -q -O /tmp/install_script.sh https://scripts.download.strangebee.com/latest/sh/install_script.sh ; sudo -v ; bash /tmp/install_script.sh
+```
+After both installs are complete, we need to allow access to the web UI of both applications by creating 2 new firewall rules to allow traffic over ports 9000 and 9001.
+```bash
+gcloud compute firewall-rules create allow-thehive \
+  --network=soc-vpc \
+  --allow=tcp:9000 \
+  --source-ranges=0.0.0.0/0 \
+  --target-tags=thehive-access
+
+gcloud compute firewall-rules create allow-cortex \
+  --network=soc-vpc \
+  --allow=tcp:9001 \
+  --source-ranges=0.0.0.0/0 \
+  --target-tags=cortex-access
+
+gcloud compute instances add-tags splunk-vm \
+  --zone=us-central1-a \
+  --tags=thehive-access,cortex-access
+```
+Next, we connect Cortex to TheHive using the Cortex API key. Login to the web UI of the two applications. You can get an API key on Cortex by heading to the Users page and generating one there.
+
+Then we add the Cortex server to TheHive. Head to Platform Management>Connectors. Select Cortex and Add server. Input the IP address, preferrably local since both installs are on the same machine and then add your API key, select the organisation and test the connection before saving the connection.
+
+<img width="1000" height="110" alt="Screenshot From 2025-09-24 17-51-56" src="https://github.com/user-attachments/assets/9c4b9813-206e-4305-8e4c-47fa12ca7d28" />
+
+Also navigate to your terminal for the splunk-vm and input this into /etc/thehive/application.conf
+```yaml
+play.modules.enabled += connectors.cortex.CortexConnector
+
+cortex {
+  servers = [
+    {
+      name = "CORTEX-SERVER"
+      url = "http://<cortex-ip>:9001"
+      auth {
+        type = key
+        key = "<your-cortex-api-key>"
+      }
+      ws {}
+    }
+  ]
+}
+```
+
+You can also organise your TheHive setup so you have a particular organisation for your connection to splunk. This is what mine looks like
+
+<img width="1100" height="332" alt="Screenshot From 2025-09-24 17-59-18" src="https://github.com/user-attachments/assets/6cd361ec-884a-4a0d-a2f6-b0051e24f959" />
+
+After this, we integrate this setup into Splunk.
 
 That's the progress so far...Updates coming soon, stay tuned!!
