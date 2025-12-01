@@ -118,17 +118,14 @@ gcloud compute firewall-rules create allow-rdp \
   --target-tags=rdp-access
 ```
 
-Finally, we add the rule to allow access to Splunk UI when we install it.
+Finally, we add the rule to allow access to Wazuh when we install it.
 ```bash
 gcloud compute firewall-rules create allow-splunk-ui \
   --network=soc-vpc \
-  --allow=tcp:8000 \
+  --allow=tcp:443 \
   --source-ranges=0.0.0.0/0 \
   --target-tags=wazuh-access
 ```
-You should have something like this
-
-<img width="700" height="123" alt="Screenshot From 2025-09-08 12-23-04" src="https://github.com/user-attachments/assets/2830a447-1e22-42ec-a516-528b629f63a4" />
 
 ### Create Attacker VM
 ```bash
@@ -226,6 +223,171 @@ Now we have our Attacker VM set. Next up, we'll install and setup our SIEM.
 P.S Getting Caldera to work fully was a "little" frustrating and the fix was only a distro change away 😮‍💨
 
 ### SIEM Setup
+We'll start with installing the SIEM. Using the quickstart guide provided by wazuh
 
-If you were following 
-That's the progress so far...Updates coming soon, stay tuned!!
+```bash
+curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh && sudo bash ./wazuh-install.sh -a
+```
+Once the assistant finishes the installation, the output shows the access credentials and a message that confirms that the installation was successful.
+
+After that we can install and configure the agents on the ubuntu and windows VMs.
+For the Ubuntu machine, run these commands
+```bash
+apt-get install gnupg apt-transport-https
+```
+```bash
+curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
+```
+```bash
+echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+```
+```bash
+apt-get update
+```
+```bash
+WAZUH_MANAGER="siem-vm-ip" apt-get install wazuh-agent
+```
+```bash
+systemctl daemon-reload
+systemctl enable wazuh-agent
+systemctl start wazuh-agent
+```
+
+For Windows, you can download the installer [here](https://packages.wazuh.com/4.x/windows/wazuh-agent-4.14.1-1.msi). Run the installer on the windows machine and follow the prompts, adding the SIEM VM's IP address in the appriopriate field. You can confirm the agents are properly configured by checking the endpoints summary tab on Wazuh dashboard.
+
+Next, we install a few extra things to make the experience a bit more interesting. We're going to add TheHive and Cortex to the setup so we can assign and investigate alerts and run jobs using analyzers and responders. I tried numerous ways to install TheHive and Cortex with so may failures. I eventually settled on using docker by creating a docker compose file, you can find that [here](https://github.com/th3Cyb3rW0lf07/th3Cyb3rW0lf07.github.io/blob/main/assets/docker-compose.yml). The only change you'll have to make is linking the application.conf file for cortex. Once you save the file in a directory, run this command `sudo docker-compose up`. The command tuns for a while and when Cortex and TheHive start receiving requests through the API, we can confirm the install is done. 
+
+The next step is integrating Cortex and TheHive. Login to Cortex, create an organisation with a user and afterwards create an API key attached to that user. Next, login to TheHive dashboard with the admin account. Head to Platform Management and then to the Cortex tab. Add a Cortex server with these details
+```yaml
+Server name - CORTEX-SERVER
+Server URL - http://siem-vm-ip:9001
+API Key - <The API Key you just created in Cortex>
+Leave the remaining settings as they are
+```
+You can then test server connection to confirm your settings are correct.
+
+Next we connect TheHive to Wazuh so we can get alerts in TheHive. Now, we create an organisation on TheHive with a user and then generate an API key to use for this integration. Then we edit the ossec config file
+```bash
+sudo nano /var/ossec/etc/ossec.conf
+```
+Next we add the code into the <ossec_config> block preferrably under the global tag
+```yaml
+<integration>
+  <name>thehive</name>
+  <hook_url>http://<THEHIVE_IP>:9000/api/alert</hook_url>
+  <level>10</level>
+  <api_key>Your_TheHive_API_Key</api_key>
+  <alert_format>json</alert_format>
+</integration>
+```
+This ensures that the only alerts that pop up on TheHive are medium severity to prevent low severity/information alerts. This seals up the integration.
+
+The next thing we need to do is setup the firewall rules for the Wazuh agents to communicate with the server.
+```bash
+gcloud compute firewall-rules create allow-wazuh-agents \
+  --network=soc-vpc \
+  --direction=INGRESS \
+  --priority=1000 \
+  --action=ALLOW \
+  --rules=tcp:1514,tcp:1515,udp:1514 \
+  --source-ranges=<Internal IP addresses of the victim VMs separated by commas> \
+  --target-tags=wazuh-server \
+  --description="Allow Wazuh agents to communicate with Wazuh Manager on the default network"
+```
+Next we give access to TheHive and Cortex
+```bash
+gcloud compute firewall-rules create allow-cortex \
+  --network=soc-vpc \
+  --allow=tcp:9001 \
+  --source-ranges=0.0.0.0/0 \
+  --target-tags=cortex-access
+
+gcloud compute firewall-rules create allow-thehive \
+  --network=soc-vpc \
+  --allow=tcp:9000 \
+  --source-ranges=0.0.0.0/0 \
+  --target-tags=thehive-access
+```
+Next
+```bash
+gcloud compute instances add-tags siem-vm \
+--tags=wazuh-server,thehive-access,cortex-access,wazuh-access
+```
+That is a majority of the firewall rules done.
+
+Now I ran into another challenge. the lab wasn't really secure. The firewall rules were not doing enough to restrict access to the VMs. I realized that the next best option was to secure all access with IAP.
+
+#### Now what is IAP?
+IAP which stands for Identity-Aware Proxy, is a Google Cloud security service that controls access to your applications and VMs based on user identity and context, instead of exposing them directly to the internet. In other words, you can access web apps and VMs without using an external IP address. With this security control in place, we can securely access the VMs in our setup without having to worry about any external unauthorized users trying to gain access to the machines.
+
+Here's how we'll set ours up. We'll ensure that a google account of our choosing has the appriopriate access via IAM i.e. Identity and Access Management (P.S IAP is one of the solutions that IAM brings to the table)
+
+First, we'll enable IAP on the project
+```bash
+gcloud services enable iap.googleapis.com
+```
+Next, we enable OS Login on the VMs
+```bash
+gcloud compute project-info add-metadata \
+  --metadata enable-oslogin=TRUE
+```
+Then, we grant the approved users the appriopriate roles
+```bash
+gcloud projects add-iam-policy-binding <PROJECT_ID> \
+  --member="user:approveduser@gmail.com" \
+  --role="roles/compute.osAdminLogin"
+
+gcloud projects add-iam-policy-binding <PROJECT_ID> \
+  --member="user:approveduser@gmail.com" \
+  --role="roles/iap.tunnelResourceAccessor"
+```
+We also need to create the firewall rules for IAP to work properly
+```bash
+gcloud compute firewall-rules create iap-access \
+  --network=soc-vpc \
+  --priority=1000 \
+  --direction=INGRESS \
+  --action=ALLOW \
+  --target-tags=iap-access \
+  --source-ranges=35.235.240.0/20 \
+  --rules=tcp
+```
+We can then tag our VMs
+```bash
+gcloud compute instances add-tags vm-name \
+  --tags=iap-access \
+  --zone=us-central1-a
+```
+Finally, to completely restrict access via IAP only, we're going to remove the external IP addresses.
+```bash
+gcloud compute instances delete-access-config VM_NAME \
+    --access-config-name="External NAT" \
+    --zone=ZONE
+```
+If you're not sure about teh access config name, run this command
+```bash
+gcloud compute instances describe VM_NAME --zone=ZONE
+```
+And there you have it, the lab is secure and ready to run.
+
+To connect to the VMs via SSH, you can run this command
+```bash
+gcloud compute ssh vm-name --zone=ZONE --tunnel-through-iap
+```
+To access the tools like Caldera, Wazuh, TheHive and Cortex we would need to use an IAP tunnel. Once this is done, these services can be accessed locally via localhost. For example, to access TheHive this is the command to run
+```bash
+gcloud compute start-iap-tunnel siem-vm 9000 \
+  --zone=ZONE \
+  --local-host-port=localhost:9000
+```
+To access the windows VM, you can forward the rdp port using this command
+```bash
+gcloud compute start-iap-tunnel windows-victim 3389 \
+  --zone=ZONE \
+  --local-host-port=localhost:3389
+```
+
+### Conclusion
+Now we are really ready to test our lab and investigate cases and alerts. In case you have any issues or concerns with the lab setup, you can send your feedback to th3cyb3rw0lf@proton.me (my email).
+For now keep stopping the bad guys, H4x0r!!
+### CIAO!!
