@@ -1,0 +1,83 @@
+version: "3.7"
+
+services:
+  cassandra:
+    image: cassandra:4
+    restart: unless-stopped
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TheHive
+    volumes:
+      - cassandradata:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe cluster' 127.0.0.1 || exit 1"]
+      interval: 20s
+      timeout: 15s
+      retries: 10
+    networks:
+      - thehive_net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - cluster.name=hive
+      - http.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearchdata:/usr/share/elasticsearch/data
+    ports:
+      - "9210:9200"   # 👈 External port changed from 9200 → 9210
+    networks:
+      - thehive_net
+
+  cortex:
+    image: thehiveproject/cortex:3.1.7
+    restart: unless-stopped
+    environment:
+      - job_directory=/opt/cortex/jobs
+    volumes:
+      - cortexdata:/opt/cortex/jobs
+      - /opt/Cortex-Analyzers:/opt/Cortex-Analyzers
+      - path to cortex config file on the siem vm:/opt/cortex/conf/application.conf
+    ports:
+      - "9001:9001"
+    networks:
+      - thehive_net
+
+  thehive:
+    image: strangebee/thehive:5.2.2
+    restart: unless-stopped
+    depends_on:
+      cassandra:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+      cortex:
+        condition: service_started
+    environment:
+      - JVM_OPTS=-Xms1024M -Xmx1024M
+    command:
+      - --secret
+      - "supersecretkey"
+      - "--cql-hostnames"
+      - "cassandra"
+      - "--index-backend"
+      - "elasticsearch"
+      - "--es-hostnames"
+      - "elasticsearch"
+      - "--no-config-cortex"
+    ports:
+      - "9000:9000"
+    networks:
+      - thehive_net
+
+volumes:
+  cassandradata:
+  elasticsearchdata:
+  cortexdata:
+
+networks:
+  thehive_net:
+    driver: bridge
